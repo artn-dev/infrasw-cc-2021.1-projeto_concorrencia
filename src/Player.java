@@ -12,12 +12,9 @@ public class Player {
     public static List<String[]> songs;
 
     public Player() {
-        songs = new ArrayList<String[]>();
+        songs = new ArrayList<>();
 
-        ActionListener confirmSong = e -> {
-            songs.add(addWindow.getSong());
-            window.updateQueueList(songs.toArray(new String[songs.size()][]));
-        };
+        ActionListener confirmSong = e -> updateQueue();
 
         ActionListener addSong = e -> {
             addWindow = new AddSongWindow(getSongId(), confirmSong, window.getAddSongWindowListener());
@@ -40,10 +37,15 @@ public class Player {
         );
     }
 
+    public static void updateQueue() {
+        songs.add(addWindow.getSong());
+        window.updateQueueList(songs.toArray(new String[songs.size()][]));
+    }
+
     public static String getSongId() {
         String id = Integer.toString(musicCount);
         musicCount++;
         return id;
-    };
+    }
 }
 
