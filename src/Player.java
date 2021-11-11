@@ -16,10 +16,11 @@ public class Player {
 
         ActionListener confirmSong = e -> {
             songs.add(addWindow.getSong());
+            window.updateQueueList(songs.toArray(new String[songs.size()][]));
         };
 
         ActionListener addSong = e -> {
-            addWindow = new AddSongWindow(getSongId(), confirmSong, null);
+            addWindow = new AddSongWindow(getSongId(), confirmSong, window.getAddSongWindowListener());
         };
 
         window = new PlayerWindow(
@@ -35,7 +36,7 @@ public class Player {
                 null,
                 null,
                 "Mastn Music Player",
-                null
+                songs.toArray(new String[0][])
         );
     }
 
