@@ -14,8 +14,8 @@ public class Player {
     public Player() {
         songs = new ArrayList<>();
 
-        ActionListener confirmSong = e -> updateQueue();
-        ActionListener addSongListener = e -> addSong(confirmSong);
+        ActionListener confirmSongListener = e -> updateQueue();
+        ActionListener addSongListener     = e -> addSong(confirmSongListener);
 
         window = new PlayerWindow(
                 null,
