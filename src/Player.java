@@ -15,15 +15,12 @@ public class Player {
         songs = new ArrayList<>();
 
         ActionListener confirmSong = e -> updateQueue();
-
-        ActionListener addSong = e -> {
-            addWindow = new AddSongWindow(getSongId(), confirmSong, window.getAddSongWindowListener());
-        };
+        ActionListener addSongListener = e -> addSong(confirmSong);
 
         window = new PlayerWindow(
                 null,
                 null,
-                addSong,
+                addSongListener,
                 null,
                 null,
                 null,
@@ -40,6 +37,10 @@ public class Player {
     public static void updateQueue() {
         songs.add(addWindow.getSong());
         window.updateQueueList(songs.toArray(new String[songs.size()][]));
+    }
+
+    public static void addSong(ActionListener onOk) {
+        addWindow = new AddSongWindow(getSongId(), onOk, window.getAddSongWindowListener());
     }
 
     public static String getSongId() {
