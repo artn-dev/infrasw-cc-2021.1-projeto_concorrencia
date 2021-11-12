@@ -2,17 +2,17 @@ import ui.AddSongWindow;
 import ui.PlayerWindow;
 
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Player {
     public static PlayerWindow window;
     public static AddSongWindow addWindow;
     public static int musicCount = 0;
-    public static List<String[]> songs;
+    public static Map<String, String[]> songs;
 
     public Player() {
-        songs = new ArrayList<>();
+        songs = new HashMap<>();
 
         ActionListener confirmSongListener = e -> updateQueue();
         ActionListener addSongListener     = e -> addSong(confirmSongListener);
@@ -30,13 +30,14 @@ public class Player {
                 null,
                 null,
                 "Mastn Music Player",
-                songs.toArray(new String[0][])
+                songs.values().toArray(new String[0][])
         );
     }
 
     public static void updateQueue() {
-        songs.add(addWindow.getSong());
-        window.updateQueueList(songs.toArray(new String[songs.size()][]));
+        String[] newSong = addWindow.getSong();
+        songs.put(newSong[6], newSong);
+        window.updateQueueList(songs.values().toArray(new String[songs.size()][]));
     }
 
     public static void addSong(ActionListener onOk) {
