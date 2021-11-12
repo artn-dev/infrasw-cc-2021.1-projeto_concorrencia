@@ -17,9 +17,10 @@ public class Player {
         ActionListener confirmSongListener = e -> updateQueue();
         ActionListener addSongListener     = e -> addSong(confirmSongListener);
         ActionListener removeSongListener  = e -> removeSong();
+        ActionListener playNowListener     = e -> startPlaying();
 
         window = new PlayerWindow(
-                null,
+                playNowListener,
                 removeSongListener,
                 addSongListener,
                 null,
@@ -48,6 +49,24 @@ public class Player {
     public static void removeSong() {
         songs.remove(Integer.toString(window.getSelectedSongID()));
         window.updateQueueList(songs.values().toArray(new String[songs.size()][]));
+    }
+
+    public static void startPlaying() {
+        window.enableScrubberArea();
+
+        int id = window.getSelectedSongID();
+        String[] currSong = songs.get(String.valueOf(id));
+        int totalTime = Integer.parseInt(currSong[5]);
+
+        window.updateMiniplayer(
+                true,
+                true,
+                false,
+                0,
+                totalTime,
+                0,
+                songs.size()
+        );
     }
 
     public static String getSongId() {
