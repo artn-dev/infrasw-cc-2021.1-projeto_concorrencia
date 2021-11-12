@@ -16,10 +16,11 @@ public class Player {
 
         ActionListener confirmSongListener = e -> updateQueue();
         ActionListener addSongListener     = e -> addSong(confirmSongListener);
+        ActionListener removeSongListener  = e -> removeSong();
 
         window = new PlayerWindow(
                 null,
-                null,
+                removeSongListener,
                 addSongListener,
                 null,
                 null,
@@ -42,6 +43,11 @@ public class Player {
 
     public static void addSong(ActionListener onOk) {
         addWindow = new AddSongWindow(getSongId(), onOk, window.getAddSongWindowListener());
+    }
+
+    public static void removeSong() {
+        songs.remove(Integer.toString(window.getSelectedSongID()));
+        window.updateQueueList(songs.values().toArray(new String[songs.size()][]));
     }
 
     public static String getSongId() {
