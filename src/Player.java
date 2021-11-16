@@ -4,12 +4,14 @@ import ui.PlayerWindow;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Semaphore;
 
 public class Player {
     public static PlayerWindow window;
     public static AddSongWindow addWindow;
     public static int musicCount = 0;
     public static Map<String, String[]> songs;
+    public static Semaphore mutex = new Semaphore(1);
     public static boolean isPlaying = false;
 
     public Player() {
@@ -19,12 +21,13 @@ public class Player {
         ActionListener addSongListener     = e -> addSong(confirmSongListener);
         ActionListener removeSongListener  = e -> removeSong();
         ActionListener playNowListener     = e -> startPlaying();
+        ActionListener playPauseListener   = e -> togglePlay();
 
         window = new PlayerWindow(
                 playNowListener,
                 removeSongListener,
                 addSongListener,
-                null,
+                playPauseListener,
                 null,
                 null,
                 null,
@@ -52,6 +55,21 @@ public class Player {
         window.updateQueueList(songs.values().toArray(new String[songs.size()][]));
     }
 
+    public static void togglePlay() {
+        new Thread() {
+            public void run() {
+                try {
+                    mutex.acquire();
+                    isPlaying = !isPlaying;
+                    mutex.release();
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+    }
+
     public static void startPlaying() {
         window.enableScrubberArea();
         isPlaying = true;
@@ -77,28 +95,33 @@ public class Player {
                 int deltaTime = 0;
 
                 while (deltaTime <= totalTime) {
-                    if (!isPlaying)
-                        continue;
-
-                    currTime = (int)System.currentTimeMillis();
-                    deltaTime = (currTime - starTime) / 1000;
-
                     try {
+                        mutex.acquire();
+
+                        if (!isPlaying) {
+                            mutex.release();
+                            continue;
+                        }
+
+                        currTime = (int)System.currentTimeMillis();
+                        deltaTime = (currTime - starTime) / 1000;
+
                         window.updateMiniplayer(
                                 true,
-                                true,
+                                isPlaying,
                                 false,
                                 deltaTime,
                                 totalTime,
                                 0,
                                 songs.size()
                         );
+
+                        mutex.release();
                         Thread.sleep(1000);
 
                     } catch (InterruptedException e1) {
                         e1.printStackTrace();
                     }
-
                 }
             }
         }.start();
