@@ -80,15 +80,7 @@ public class Player {
         String[] currSong = songs.get(String.valueOf(id));
         currSongData[1] = Integer.parseInt(currSong[5]);
 
-        window.updateMiniplayer(
-                true,
-                isPlaying,
-                false,
-                currSongData[0],
-                currSongData[1],
-                0,
-                songs.size()
-        );
+        updateMiniplayer();
 
         new Thread() {
             public void run() {
@@ -101,16 +93,7 @@ public class Player {
                             continue;
                         }
 
-                       window.updateMiniplayer(
-                                true,
-                                isPlaying,
-                                false,
-                                currSongData[0],
-                                currSongData[1],
-                                0,
-                                songs.size()
-                        );
-
+                        updateMiniplayer();
                         currSongData[0] += 1;
 
                         mutex.release();
@@ -122,6 +105,18 @@ public class Player {
                 }
             }
         }.start();
+    }
+
+    public static void updateMiniplayer() {
+        window.updateMiniplayer(
+                true,
+                isPlaying,
+                false,
+                currSongData[0],
+                currSongData[1],
+                0,
+                songs.size()
+        );
     }
 
     public static String getSongId() {
