@@ -90,8 +90,6 @@ public class Player {
 
         new Thread() {
             public void run() {
-                int starTime  = (int)System.currentTimeMillis();
-                int currTime  = 0;
                 int deltaTime = 0;
 
                 while (deltaTime <= totalTime) {
@@ -103,10 +101,7 @@ public class Player {
                             continue;
                         }
 
-                        currTime = (int)System.currentTimeMillis();
-                        deltaTime = (currTime - starTime) / 1000;
-
-                        window.updateMiniplayer(
+                       window.updateMiniplayer(
                                 true,
                                 isPlaying,
                                 false,
@@ -115,6 +110,8 @@ public class Player {
                                 0,
                                 songs.size()
                         );
+
+                        deltaTime += 1;
 
                         mutex.release();
                         Thread.sleep(1000);
