@@ -106,8 +106,18 @@ public class Player {
                         e1.printStackTrace();
                     }
                 }
+
+                stopPlaying();
             }
         }.start();
+    }
+
+    public static void stopPlaying() {
+        isPlaying = false;
+        isActive  = false;
+        currSongData[0] = 0;
+        currSongData[1] = 0;
+        updateMiniplayer();
     }
 
     public static void updateMiniplayer() {
