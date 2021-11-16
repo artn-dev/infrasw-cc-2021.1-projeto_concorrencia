@@ -13,6 +13,7 @@ public class Player {
     public static Map<String, String[]> songs;
     public static Semaphore mutex = new Semaphore(1);
     public static boolean isPlaying = false;
+    public static boolean isActive = false;
     public static int[] currSongData;
 
     public Player() {
@@ -24,13 +25,14 @@ public class Player {
         ActionListener removeSongListener  = e -> removeSong();
         ActionListener playNowListener     = e -> startPlaying();
         ActionListener playPauseListener   = e -> togglePlay();
+        ActionListener stopListener        = e -> stopPlaying();
 
         window = new PlayerWindow(
                 playNowListener,
                 removeSongListener,
                 addSongListener,
                 playPauseListener,
-                null,
+                stopListener,
                 null,
                 null,
                 null,
@@ -76,6 +78,7 @@ public class Player {
     public static void startPlaying() {
         window.enableScrubberArea();
         isPlaying = true;
+        isActive  = true;
 
         int id = window.getSelectedSongID();
         String[] currSong = songs.get(String.valueOf(id));
@@ -85,7 +88,7 @@ public class Player {
 
         new Thread() {
             public void run() {
-                while (currSongData[0] <= currSongData[1]) {
+                while (isActive && currSongData[0] <= currSongData[1]) {
                     try {
                         mutex.acquire();
 
@@ -104,13 +107,23 @@ public class Player {
                         e1.printStackTrace();
                     }
                 }
+
+                stopPlaying();
             }
         }.start();
     }
 
+    public static void stopPlaying() {
+        isPlaying = false;
+        isActive  = false;
+        currSongData[0] = 0;
+        currSongData[1] = 0;
+        updateMiniplayer();
+    }
+
     public static void updateMiniplayer() {
         window.updateMiniplayer(
-                true,
+                isActive,
                 isPlaying,
                 false,
                 currSongData[0],
