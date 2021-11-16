@@ -10,6 +10,7 @@ public class Player {
     public static AddSongWindow addWindow;
     public static int musicCount = 0;
     public static Map<String, String[]> songs;
+    public static boolean isPlaying = false;
 
     public Player() {
         songs = new HashMap<>();
@@ -53,6 +54,7 @@ public class Player {
 
     public static void startPlaying() {
         window.enableScrubberArea();
+        isPlaying = true;
 
         int id = window.getSelectedSongID();
         String[] currSong = songs.get(String.valueOf(id));
@@ -60,7 +62,7 @@ public class Player {
 
         window.updateMiniplayer(
                 true,
-                true,
+                isPlaying,
                 false,
                 0,
                 totalTime,
@@ -75,6 +77,9 @@ public class Player {
                 int deltaTime = 0;
 
                 while (deltaTime <= totalTime) {
+                    if (!isPlaying)
+                        continue;
+
                     currTime = (int)System.currentTimeMillis();
                     deltaTime = (currTime - starTime) / 1000;
 
