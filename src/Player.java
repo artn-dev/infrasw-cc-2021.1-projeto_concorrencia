@@ -13,6 +13,7 @@ public class Player {
     public static Map<String, String[]> songs;
     public static Semaphore mutex = new Semaphore(1);
     public static boolean isPlaying = false;
+    public static boolean isActive = false;
     public static int[] currSongData;
 
     public Player() {
@@ -76,6 +77,7 @@ public class Player {
     public static void startPlaying() {
         window.enableScrubberArea();
         isPlaying = true;
+        isActive  = true;
 
         int id = window.getSelectedSongID();
         String[] currSong = songs.get(String.valueOf(id));
@@ -110,7 +112,7 @@ public class Player {
 
     public static void updateMiniplayer() {
         window.updateMiniplayer(
-                true,
+                isActive,
                 isPlaying,
                 false,
                 currSongData[0],
