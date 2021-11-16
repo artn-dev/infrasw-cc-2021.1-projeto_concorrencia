@@ -67,6 +67,36 @@ public class Player {
                 0,
                 songs.size()
         );
+
+        new Thread() {
+            public void run() {
+                int starTime  = (int)System.currentTimeMillis();
+                int currTime  = 0;
+                int deltaTime = 0;
+
+                while (deltaTime <= totalTime) {
+                    currTime = (int)System.currentTimeMillis();
+                    deltaTime = (currTime - starTime) / 1000;
+
+                    try {
+                        window.updateMiniplayer(
+                                true,
+                                true,
+                                false,
+                                deltaTime,
+                                totalTime,
+                                0,
+                                songs.size()
+                        );
+                        Thread.sleep(1000);
+
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
+
+                }
+            }
+        }.start();
     }
 
     public static String getSongId() {
