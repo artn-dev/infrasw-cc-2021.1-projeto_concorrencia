@@ -13,9 +13,11 @@ public class Player {
     public static Map<String, String[]> songs;
     public static Semaphore mutex = new Semaphore(1);
     public static boolean isPlaying = false;
+    public static int[] currSongData;
 
     public Player() {
         songs = new HashMap<>();
+        currSongData = new int[]{0, 0};
 
         ActionListener confirmSongListener = e -> updateQueue();
         ActionListener addSongListener     = e -> addSong(confirmSongListener);
@@ -76,23 +78,21 @@ public class Player {
 
         int id = window.getSelectedSongID();
         String[] currSong = songs.get(String.valueOf(id));
-        int totalTime = Integer.parseInt(currSong[5]);
+        currSongData[1] = Integer.parseInt(currSong[5]);
 
         window.updateMiniplayer(
                 true,
                 isPlaying,
                 false,
-                0,
-                totalTime,
+                currSongData[0],
+                currSongData[1],
                 0,
                 songs.size()
         );
 
         new Thread() {
             public void run() {
-                int deltaTime = 0;
-
-                while (deltaTime <= totalTime) {
+                while (currSongData[0] <= currSongData[1]) {
                     try {
                         mutex.acquire();
 
@@ -105,13 +105,13 @@ public class Player {
                                 true,
                                 isPlaying,
                                 false,
-                                deltaTime,
-                                totalTime,
+                                currSongData[0],
+                                currSongData[1],
                                 0,
                                 songs.size()
                         );
 
-                        deltaTime += 1;
+                        currSongData[0] += 1;
 
                         mutex.release();
                         Thread.sleep(1000);
