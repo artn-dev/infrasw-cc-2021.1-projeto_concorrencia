@@ -25,13 +25,14 @@ public class Player {
         ActionListener removeSongListener  = e -> removeSong();
         ActionListener playNowListener     = e -> startPlaying();
         ActionListener playPauseListener   = e -> togglePlay();
+        ActionListener stopListener        = e -> stopPlaying();
 
         window = new PlayerWindow(
                 playNowListener,
                 removeSongListener,
                 addSongListener,
                 playPauseListener,
-                null,
+                stopListener,
                 null,
                 null,
                 null,
@@ -87,7 +88,7 @@ public class Player {
 
         new Thread() {
             public void run() {
-                while (currSongData[0] <= currSongData[1]) {
+                while (isActive && currSongData[0] <= currSongData[1]) {
                     try {
                         mutex.acquire();
 
