@@ -63,6 +63,7 @@ public class Player {
                 try {
                     mutex.acquire();
                     isPlaying = !isPlaying;
+                    updateMiniplayer();
                     mutex.release();
 
                 } catch (InterruptedException e) {
